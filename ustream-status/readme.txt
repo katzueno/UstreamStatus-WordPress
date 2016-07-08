@@ -8,8 +8,8 @@ Author URI: http://katzueno.com/
 Tags: livecasting, status, ustream, live cast
 License: GPL2
 Requires at least: 2.8.0
-Tested up to: 4.3
-Stable tag: 2.0.2
+Tested up to: 4.5.3
+Stable tag: 2.0.3
 
 Display the online/offline status of a Ustream channel
 
@@ -123,6 +123,10 @@ If you're still having problem getting the status, you can think of the followin
 1. Ustream Status in action
 
 == Changelog ==
+
+= 2.0.3 =
+
+* Ustream API no longer accepts http request but https.
 
 = 2.0.2 =
 
