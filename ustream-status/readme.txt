@@ -101,15 +101,9 @@ If you don't see the change os status after 120 seconds you become live, you may
 
 = How can I check if Ustream server is working or not? =
 
-In order to check if Ustream service itself is working or not, you could directly ping their server by going to
-
-http://api.ustream.tv/php/channel/XXXX/getValueOf/status
-
-Replace the last "XXXX" to your account ID (e.g., YokosoNews) when you're live. You should be able to see like `s:4:"live";`, in your browser.
-
 If you're still having problem getting the status, you can think of the following situation
 
-- You mistyped your Ustream channel ID
+- You mistyped your Ustream channel
 - You mistyped the wrong URL of images
 - Ustream Server may be having some problem.
 - Your WordPress server may be blocked from Ustream Server
