@@ -78,6 +78,13 @@ Shortcode Example:
 
 This plugin uses cache. You may have to wait for 60 seconds until you see the channel becomes live or offline. Please be patient!
 
+= When You Cleaning-up and/or When you uninstall This plugin =
+
+When you constantly adding and deleting channel, or when you want to uninstall this plug-in, you may want to consider using one of the following plug-in since this plug-in uses transient as part of cache.
+
+https://wordpress.org/plugins/delete-expired-transients/
+https://wordpress.org/plugins/artiss-transient-cleaner/
+
 
 == Frequently Asked Questions ==
 
