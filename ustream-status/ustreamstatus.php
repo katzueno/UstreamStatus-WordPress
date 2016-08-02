@@ -84,66 +84,71 @@ class wp_ustream_status_widget extends WP_Widget {
      * ============================================================
     */
 	function widget( $args, $instance ) {
-
 		extract($args);
 		$account = esc_html($instance['account']);
 		$title = esc_html($instance['title']);
 		$online = esc_url($instance['online']);
 		$offline = esc_url($instance['offline']);
-        if (!is_empty($title)) {
-            $title = 'Ustream Status';
-        }
         echo $before_widget;
-		if ( $account )
-		echo $before_title . $title . $after_title;
-		// ==============================
-		// Ustream Status starts here
-		// ==============================
-		// TRANSIENT STARTS HERE
-        $transientName = 'wp_ustream_status_' . $account;
-		if ( false === ( $UstChannelStatus = get_transient( $transientName ) ) ) {
-			$opt = stream_context_create(array(
-			'http' => array( 'timeout' => 3 )
-			));
-			$UstChannelMetaTags = @get_meta_tags('https://api.ustream.tv/php/channel/' . $account);
-			$UstChannelID = intval($UstChannelMetaTags['ustream:channel_id']);
-			if ($UstChannelID) {
-    			$UstChannelStatus = @file_get_contents('https://api.ustream.tv/channels/' . $UstChannelID . '.json',0,$opt);
-        		$UstChannelStatus = json_decode($UstChannelStatus);
-                $UstChannelStatus = $UstChannelStatus->channel->status;
-    			set_transient($transientName, $UstChannelStatus, 60 );
-			} else {
-    			$UstChannelStatus = '';
-			}
+		if ( $account ) {
+    		if (!empty($title)) {
+    		echo $before_title . $title . $after_title;
+            }
+    		// ==============================
+    		// Ustream Status starts here
+    		// ==============================
+    		// TRANSIENT STARTS HERE
+            $transientName = 'wp_ustream_status_' . $account;
+    		if ( false === ( $UstChannelStatus = get_transient( $transientName ) ) ) {
+    			$opt = stream_context_create(array(
+    			'http' => array( 'timeout' => 3 )
+    			));
+    			$UstChannelMetaTags = array();
+    			$UstChannelMetaTags = @get_meta_tags('http://www.ustream.tv/channel/' . $account);
+    			$UstChannelID = intval($UstChannelMetaTags['ustream:channel_id']);
+    			if ($UstChannelID) {
+        			$UstChannelStatus = @file_get_contents('https://api.ustream.tv/channels/' . $UstChannelID . '.json',0,$opt);
+            		$UstChannelStatus = json_decode($UstChannelStatus);
+                    $UstChannelStatus = $UstChannelStatus->channel->status;
+        			set_transient($transientName, $UstChannelStatus, 60 );
+    			} else {
+        			$UstChannelStatus = '';
+    			}
+    		}
+    		// TRANSIENT ENDS HERE
+    			// For DEBUG
+    		// Decode JSON
+    		switch ($UstChannelStatus) {
+    			case 'live':
+        			$output = "<div align=\"center\"><a href=\"http://www.ustream.tv/channel/$account\" alt=\"";
+        			$output .= __('Click here to visit the Ustream channel');
+        			$output .= '" target="_blank">';
+        			$output .= "<img src=\"$online\" alt=\"";
+        			$output .= __('Live now');
+        			$output .= '" target="_blank" />';
+        			$output .= "</a></div>";
+        			echo $output;
+    		// ONLINE part ends here
+    			break;
+    			case 'offair':
+        			// If not live, including when the API does not respond
+        			$output = "<div align=\"center\"><a href=\"http://www.ustream.tv/channel/$account\" alt=\"";
+        			$output .= __('Click here to visit the Ustream channel');
+        			$output .= ' target="_blank">';
+        			$output .= "<img src=\"$offline\" alt=\"";
+        			$output .= __('Offline');
+        			$output .= '" />';
+        			$output .= '</a></div>';
+        			echo $output;
+    			break;
+    			default:
+    			    echo _e('Error occured. We could not retrieve the data from Ustream.');
+    			break;
+            }
+    		// ==============================
+    		// Ustream Status ends here
+    		// ==============================
 		}
-		// TRANSIENT ENDS HERE
-			// For DEBUG
-			echo '<!-- Ustream Status Debug';
-			var_dump($UstChannelStatus);
-			echo '-->';
-		// Decode JSON
-		switch ($UstChannelStatus) {
-			case 'live':
-    			$output = "<div align=\"center\"><a href=\"http://www.ustream.tv/channel/$account\" alt=\"" . _e('Click here to visit the Ustream channel') . '" target="_blank">';
-    			$output .= "<img src=\"$online\" alt=\"". _e('Live now') . '" target="_blank" />';
-    			$output .= "</a></div>";
-    			echo $output;
-		// ONLINE part ends here
-			break;
-			case 'offair':
-    			// If not live, including when the API does not respond
-    			$output = "<div align=\"center\"><a href=\"http://www.ustream.tv/channel/$account\" alt=\"" . _e('Click here to visit the Ustream channel') . '" target="_blank">';
-    			$output .= "<img src=\"$offline\" alt=\"" . _e('Offline') . '" />';
-    			$output .= '</a></div>';
-    			echo $output;
-			break;
-			default:
-			    echo _e('Error occured. We could not retrieve the data from Ustream.');
-			break;
-        }
-		// ==============================
-		// Ustream Status ends here
-		// ==============================
 		echo $after_widget;
 	}
 }
@@ -154,7 +159,7 @@ class wp_ustream_status_widget extends WP_Widget {
 // ============================================================
 function ustream_status_shortcode($atts) {
     // do something
-    $account = preg_replace("#^.*/([^/]+)/?$#",'${1}',$atts['channel']);
+    $account = esc_html(preg_replace("#^.*/([^/]+)/?$#",'${1}',$atts['channel']));
     $online = esc_url($atts['online']);
     $offline = esc_url($atts['offline']);
 
@@ -164,7 +169,8 @@ function ustream_status_shortcode($atts) {
 		$opt = stream_context_create(array(
 		'http' => array( 'timeout' => 3 )
 		));
-		$UstChannelMetaTags = @get_meta_tags('https://api.ustream.tv/php/channel/' . $account);
+		$UstChannelMetaTags = array();
+		$UstChannelMetaTags = @get_meta_tags('http://www.ustream.tv/channel/' . $account);
 		$UstChannelID = intval($UstChannelMetaTags['ustream:channel_id']);
 		if ($UstChannelID) {
 			$UstChannelStatus = @file_get_contents('https://api.ustream.tv/channels/' . $UstChannelID . '.json',0,$opt);
@@ -176,7 +182,7 @@ function ustream_status_shortcode($atts) {
 		}
 	}
 	// TRANSIENT ENDS HERE
-    switch ( $UstChannelStatus->status )
+    switch ( $UstChannelStatus )
         {
         case 'live':
     	    $output = '<a href="http://www.ustream.tv/channel/';
