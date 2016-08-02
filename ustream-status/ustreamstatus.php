@@ -142,7 +142,7 @@ class wp_ustream_status_widget extends WP_Widget {
         			echo $output;
     			break;
     			default:
-    			    echo _e('Error occured. We could not retrieve the data from Ustream.');
+    			    _e('Error occured. We could not retrieve the data from Ustream.');
     			break;
             }
     		// ==============================
@@ -209,7 +209,7 @@ function ustream_status_shortcode($atts) {
     	    $output .= '" /></a>';
             break;
         default:
-            $output = _e('Error occured. We could not retrieve the data from Ustream.');
+            $output = __('Error occured. We could not retrieve the data from Ustream.');
         break;
         }
     return $output;
