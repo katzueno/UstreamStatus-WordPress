@@ -9,7 +9,7 @@ Tags: livecasting, status, ustream, live cast
 License: GPL2
 Requires at least: 2.8.0
 Tested up to: 4.6.0
-Stable tag: 2.1.0
+Stable tag: 3.0.0
 
 Display the online/offline status of a Ustream channel
 
