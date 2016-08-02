@@ -127,6 +127,7 @@ If you're still having problem getting the status, you can think of the followin
 = 3.0.0 =
 
 * Switch to support new Ustream API.
+* You don't notice the difference but I completely changed the way the plugin fetch the online status.
 
 = 2.0.3 =
 
