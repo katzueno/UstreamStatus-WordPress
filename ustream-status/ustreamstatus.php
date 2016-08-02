@@ -5,14 +5,14 @@ Plugin Name: Ustream Status
 Plugin URI: http://katzueno.com/wordpress/ustream-status/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8S6WTYMY9SXG
 Description: Display the online/offline status of a Ustream channel.
-Version: 2.0.3
+Version: 3.0.0
 Author: Katz Ueno
 Author URI: http://katzueno.com/
 Tags: livecasting, status, ustream, live cast
 License: GPL2
 */
 
-/*  Copyright 2016  Katsuyuki Ueno  (email : katz515@deerstudio.com)
+/*  Copyright 2016 Katsuyuki Ueno (email : katzueno@deerstudio.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -30,9 +30,10 @@ License: GPL2
 
 class wp_ustream_status_widget extends WP_Widget {
 
-	// ============================================================
-	// Constructer
-	// ============================================================
+	/* ============================================================
+	 * Constructer
+     * ============================================================
+    */
     function wp_ustream_status_widget () {
 		$widget_ops = array(
         'description' => 'Display Ustream online status'
@@ -40,17 +41,21 @@ class wp_ustream_status_widget extends WP_Widget {
 	    parent::WP_Widget(false, $name = 'Ustream Status',$widget_ops);
     }
 
-	// ============================================================
-    // Form
-	// ============================================================
+	/* ============================================================
+	 * Form
+     * ============================================================
+    */
     function form( $instance ) {
 		//Reading the existing data from $instance
 		$instance = wp_parse_args( (array) $instance, array( 'account' => 'YokosoNews', 'online' => '', 'offline' => '') );
+		$title = esc_attr( $instance['title'] );
 		$account = esc_attr( $instance['account'] );
 		$online = esc_attr( $instance['online'] );
 		$offline = esc_attr( $instance['offline'] );
     ?>
     <!--Form-->
+    <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Widget Title'); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label></p>
+
     <p><label for="<?php echo $this->get_field_id('account'); ?>"><?php _e('Ustream channel name or URL:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('account'); ?>" name="<?php echo $this->get_field_name('account'); ?>" type="text" value="<?php echo $account; ?>" /></label></p>
 
     <p><label for="<?php echo $this->get_field_id('online'); ?>"><?php _e('Online image URL:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('online'); ?>" name="<?php echo $this->get_field_name('online'); ?>" type="text" value="<?php echo $online; ?>" /></label></p>
@@ -60,77 +65,82 @@ class wp_ustream_status_widget extends WP_Widget {
     <?php    }
 
 
-	// ============================================================
-    // Update
-	// ============================================================
+	/* ============================================================
+	 * Update
+     * ============================================================
+    */
     function update( $new_instance, $old_instance ) {
     // Old Instance and New instance
     		$instance = $old_instance;
+    		$instance['title'] = esc_html( $new_instance['title'] );
     		$instance['account'] = preg_replace("#^.*/([^/]+)/?$#",'${1}', $new_instance['account']);
     		$instance['online'] = esc_url( $new_instance['online'] );
     		$instance['offline'] = esc_url( $new_instance['offline'] );
     return $instance;
     }
 
-	// ============================================================
-	// View
-	// ============================================================
+	/* ============================================================
+	 * Widget View
+     * ============================================================
+    */
 	function widget( $args, $instance ) {
 
 		extract($args);
 		$account = esc_html($instance['account']);
+		$title = esc_html($instance['title']);
 		$online = esc_url($instance['online']);
 		$offline = esc_url($instance['offline']);
-
+        if (!is_empty($title)) {
+            $title = 'Ustream Status';
+        }
         echo $before_widget;
 		if ( $account )
-		echo $before_title . 'Ustream Status' . $after_title;
+		echo $before_title . $title . $after_title;
 		// ==============================
 		// Ustream Status starts here
 		// ==============================
 		// TRANSIENT STARTS HERE
         $transientName = 'wp_ustream_status_' . $account;
-		if ( false === ( $UstStatusArray = get_transient( $transientName ) ) ) {
+		if ( false === ( $UstChannelStatus = get_transient( $transientName ) ) ) {
 			$opt = stream_context_create(array(
 			'http' => array( 'timeout' => 3 )
 			));
-			$UstStatusSerial = @file_get_contents('https://api.ustream.tv/php/channel/' . $account . '/getValueOf/status',0,$opt);
-			$UstStatusArray = unserialize($UstStatusSerial);
-			set_transient($transientName, $UstStatusArray, 60 );
+			$UstChannelMetaTags = @get_meta_tags('https://api.ustream.tv/php/channel/' . $account);
+			$UstChannelID = intval($UstChannelMetaTags['ustream:channel_id']);
+			if ($UstChannelID) {
+    			$UstChannelStatus = @file_get_contents('https://api.ustream.tv/channels/' . $UstChannelID . '.json',0,$opt);
+        		$UstChannelStatus = json_decode($UstChannelStatus);
+                $UstChannelStatus = $UstChannelStatus->channel->status;
+    			set_transient($transientName, $UstChannelStatus, 60 );
+			} else {
+    			$UstChannelStatus = '';
+			}
 		}
 		// TRANSIENT ENDS HERE
 			// For DEBUG
-			// echo '<!--' . $UstStatusArray . '-->';
+			echo '<!-- Ustream Status Debug';
+			var_dump($UstChannelStatus);
+			echo '-->';
 		// Decode JSON
-		switch ( $UstStatusArray['results'] )
-			{
+		switch ($UstChannelStatus) {
 			case 'live':
-				$UstStatus = 1;
-			break;
-			case 'offline':
-				$UstStatus = 2;
-			break;
-			case 'error':
-				$UstStatus = false;
-			break;
-			}
-		if ($UstStatus == 1) {
-		?>
-			<div align="center"><a href="http://www.ustream.tv/channel/<?php echo $account;?>" alt="<?php _e('Click here to visit the Ustream channel'); ?>" target="_blank">
-			<img src="<?php echo $online; ?>" alt="<?php _e('Live now'); ?>" target="_blank" />
-			</a></div>
-		<?php
+    			$output = "<div align=\"center\"><a href=\"http://www.ustream.tv/channel/$account\" alt=\"" . _e('Click here to visit the Ustream channel') . '" target="_blank">';
+    			$output .= "<img src=\"$online\" alt=\"". _e('Live now') . '" target="_blank" />';
+    			$output .= "</a></div>";
+    			echo $output;
 		// ONLINE part ends here
-		}
-		else if ($UstStatus == 2) {
-			// If not live, including when the API does not respond
-			?>
-			<div align="center"><a href="http://www.ustream.tv/channel/<?php echo $account;?>" alt="<?php _e('Click here to visit the Ustream channel'); ?>" target="_blank">
-			<img src="<?php echo $offline; ?>" alt="<?php _e('Offline'); ?>" />
-			</a></div>
-		<?php } else {
-			echo _e('Error occured. We could not retrieve the data from Ustream.');
-		}
+			break;
+			case 'offair':
+    			// If not live, including when the API does not respond
+    			$output = "<div align=\"center\"><a href=\"http://www.ustream.tv/channel/$account\" alt=\"" . _e('Click here to visit the Ustream channel') . '" target="_blank">';
+    			$output .= "<img src=\"$offline\" alt=\"" . _e('Offline') . '" />';
+    			$output .= '</a></div>';
+    			echo $output;
+			break;
+			default:
+			    echo _e('Error occured. We could not retrieve the data from Ustream.');
+			break;
+        }
 		// ==============================
 		// Ustream Status ends here
 		// ==============================
@@ -148,56 +158,54 @@ function ustream_status_shortcode($atts) {
     $online = esc_url($atts['online']);
     $offline = esc_url($atts['offline']);
 
-    // TRANSIENT STARTS HERE
+	// TRANSIENT STARTS HERE
     $transientName = 'wp_ustream_status_' . $account;
-    if ( false === ( $UstStatusArray = get_transient( $transientName ) ) ) {
-        $opt = stream_context_create(array(
-        'http' => array( 'timeout' => 3 )
-        ));
-        $UstStatusSerial = @file_get_contents('https://api.ustream.tv/php/channel/' . $account . '/getValueOf/status',0,$opt);
-        $UstStatusArray = unserialize($UstStatusSerial);
-        set_transient($transientName, $UstStatusArray, 60 );
-    }
-    // TRANSIENT ENDS HERE
-
-    switch ( $UstStatusArray['results'] )
+	if ( false === ( $UstChannelStatus = get_transient( $transientName ) ) ) {
+		$opt = stream_context_create(array(
+		'http' => array( 'timeout' => 3 )
+		));
+		$UstChannelMetaTags = @get_meta_tags('https://api.ustream.tv/php/channel/' . $account);
+		$UstChannelID = intval($UstChannelMetaTags['ustream:channel_id']);
+		if ($UstChannelID) {
+			$UstChannelStatus = @file_get_contents('https://api.ustream.tv/channels/' . $UstChannelID . '.json',0,$opt);
+    		$UstChannelStatus = json_decode($UstChannelStatus);
+            $UstChannelStatus = $UstChannelStatus->channel->status;
+			set_transient($transientName, $UstChannelStatus, 60 );
+		} else {
+			$UstChannelStatus = '';
+		}
+	}
+	// TRANSIENT ENDS HERE
+    switch ( $UstChannelStatus->status )
         {
         case 'live':
-            $UstStatus = 1;
+    	    $output = '<a href="http://www.ustream.tv/channel/';
+    	    $output .= $account;
+    	    $output .= '" alt="';
+    	    $output .= __('Click here to visit the Ustream channel');
+    	    $output .= '" target="_blank"><img src="';
+    	    $output .= $online;
+    	    $output .='" alt="';
+    	    $output .= __('Live now');
+    	    $output .= '" target="_blank" /></a>';
+            // ONLINE part ends here
         break;
-        case 'offline':
-            $UstStatus = 2;
-        break;
-        case 'error':
-            $UstStatus = false;
+        case 'offair':
+            // If not live, including when the API does not respond
+    	    $output = '<a href="http://www.ustream.tv/channel/';
+    	    $output .= $account;
+    	    $output .= '" alt="';
+    	    $output .= __('Click here to visit the Ustream channel');
+    	    $output .= '" target="_blank"><img src="';
+    	    $output .= $offline;
+    	    $output .= '" alt="';
+    	    $output .= __('Offline');
+    	    $output .= '" /></a>';
+            break;
+        default:
+            $output = _e('Error occured. We could not retrieve the data from Ustream.');
         break;
         }
-    if ($UstStatus == 1) {
-	    $output = '<a href="http://www.ustream.tv/channel/';
-	    $output .= $account;
-	    $output .= '" alt="';
-	    $output .= __('Click here to visit the Ustream channel');
-	    $output .= '" target="_blank"><img src="';
-	    $output .= $online;
-	    $output .='" alt="';
-	    $output .= __('Live now');
-	    $output .= '" target="_blank" /></a>';
-    // ONLINE part ends here
-    }
-    else if ($UstStatus == 2) {
-        // If not live, including when the API does not respond
-	    $output = '<a href="http://www.ustream.tv/channel/';
-	    $output .= $account;
-	    $output .= '" alt="';
-	    $output .= __('Click here to visit the Ustream channel');
-	    $output .= '" target="_blank"><img src="';
-	    $output .= $offline;
-	    $output .= '" alt="';
-	    $output .= __('Offline');
-	    $output .= '" /></a>';
-    } else {
-        $output = __('Error occured. We could not retrieve the data from Ustream.');
-    }
     return $output;
 }
 
