@@ -21,10 +21,6 @@ Enter a Ustream channel, and it will fetch the online/offline status. Then it wi
 
 Ustream is one of the major live casting service providers that anybody can start a live cast for free or even make money.
 
-At this point, this Ustream Status only supports one channel per blog. (You can place multiple widgets of one channel.)
-
-You want me to be able to add more? Then I'll wait for your feedback.
-
 SAMPLE SITE (although you only see it when I'm live)
 http://katzueno.com/
 
@@ -102,9 +98,9 @@ You need to make your own images. I may make preset later if you ask me so.
 
 = I'm live. But my status won't change. =
 
-First, wait for 60 seconds. Ustream Status uses cache. It only check the live/offline status once every 120 seconds.
+First, wait for 60 seconds. Ustream Status uses cache. It only checks the live/offline status once every 60 seconds.
 
-If you don't see the change os status after 120 seconds you become live, you may have misspelled your Ustream ID, your WordPress site may be having hard time reaching Ustream Server, or your IP may be blocked from Ustream Server.
+If you don't see the change os status after 60 seconds you become live, you may have misspelled your Ustream ID, your WordPress site may be having hard time reaching Ustream Server, or your IP may be blocked from Ustream Server.
 
 = How can I check if Ustream server is working or not? =
 

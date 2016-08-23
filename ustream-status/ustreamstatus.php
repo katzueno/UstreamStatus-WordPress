@@ -155,7 +155,7 @@ class wp_ustream_status_widget extends WP_Widget {
 
 // ============================================================
 // Registering shortcode
-// [ustream-status online='online image URL' offline='offline image URL' channel='http://www.ustream.tv/concrete5japan']
+// [ustream-status online='online image URL' offline='offline image URL' channel='http://www.ustream.tv/channel/concrete5japan']
 // ============================================================
 function ustream_status_shortcode($atts) {
     // do something
