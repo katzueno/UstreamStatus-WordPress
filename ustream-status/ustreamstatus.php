@@ -10,6 +10,8 @@ Author: Katz Ueno
 Author URI: http://katzueno.com/
 Tags: livecasting, status, ustream, live cast
 License: GPL2
+Text Domain: ustream-status
+Domain Path: /languages
 */
 
 /*  Copyright 2016 Katsuyuki Ueno (email : katzueno@deerstudio.com)
