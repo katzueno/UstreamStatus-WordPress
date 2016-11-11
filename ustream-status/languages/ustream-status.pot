@@ -1,0 +1,70 @@
+# Copyright (C) 2016 Ustream Status
+# This file is distributed under the same license as the Ustream Status package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ustream Status 3.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ustream-status\n"
+"POT-Creation-Date: 2016-11-11 22:45:03+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: ustreamstatus.php:57
+msgid "Widget Title"
+msgstr ""
+
+#: ustreamstatus.php:59
+msgid "Ustream channel name or URL:"
+msgstr ""
+
+#: ustreamstatus.php:61
+msgid "Online image URL:"
+msgstr ""
+
+#: ustreamstatus.php:63
+msgid "Offline image URL:"
+msgstr ""
+
+#: ustreamstatus.php:124 ustreamstatus.php:136 ustreamstatus.php:191
+#: ustreamstatus.php:204
+msgid "Click here to visit the Ustream channel"
+msgstr ""
+
+#: ustreamstatus.php:127 ustreamstatus.php:195
+msgid "Live now"
+msgstr ""
+
+#: ustreamstatus.php:139 ustreamstatus.php:208
+msgid "Offline"
+msgstr ""
+
+#: ustreamstatus.php:145 ustreamstatus.php:212
+msgid "Error occured. We could not retrieve the data from Ustream."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Ustream Status"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://katzueno.com/wordpress/ustream-status/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Display the online/offline status of a Ustream channel."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Katz Ueno"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://katzueno.com/"
+msgstr ""
+
+#. Tags of the plugin/theme
+msgid "livecasting, status, ustream, live cast"
+msgstr ""
