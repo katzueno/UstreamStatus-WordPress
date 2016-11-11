@@ -5,7 +5,7 @@ Plugin Name: Ustream Status
 Plugin URI: http://katzueno.com/wordpress/ustream-status/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8S6WTYMY9SXG
 Description: Display the online/offline status of a Ustream channel.
-Version: 3.0.0
+Version: 3.0.1
 Author: Katz Ueno
 Author URI: http://katzueno.com/
 Tags: livecasting, status, ustream, live cast
@@ -193,7 +193,7 @@ function ustream_status_shortcode($atts) {
     	    $output .= $online;
     	    $output .='" alt="';
     	    $output .= __('Live now');
-    	    $output .= '" target="_blank" /></a>';
+    	    $output .= '" /></a>';
             // ONLINE part ends here
         break;
         case 'offair':
@@ -228,4 +228,9 @@ function wpUstreamStatusInit() {
 // ============================================================
 add_action('widgets_init', 'wpUstreamStatusInit');
 add_shortcode('ustream-status', 'ustream_status_shortcode' );
+
+function ustream_status_load_plugin_textdomain() {
+    load_plugin_textdomain( 'ustream-status', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'plugins_loaded', 'ustream_status_load_plugin_textdomain' );
 ?>

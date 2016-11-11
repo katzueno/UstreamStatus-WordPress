@@ -9,7 +9,7 @@ Tags: livecasting, status, ustream, live cast
 License: GPL2
 Requires at least: 2.8.0
 Tested up to: 4.6.0
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 
 Display the online/offline status of a Ustream channel
 
@@ -121,6 +121,10 @@ If you're still having problem getting the status, you can think of the followin
 
 == Changelog ==
 
+= 3.0.1 =
+
+* Support translation.
+
 = 3.0.0 =
 
 * Switch to support new Ustream API.
@@ -149,6 +153,15 @@ If you're still having problem getting the status, you can think of the followin
 * The initial version. This version should work ok.
 
 == Upgrade Notice ==
+
+= 3.0.1 =
+
+* Support translation.
+
+= 3.0.0 =
+
+* Switch to support new Ustream API.
+* You don't notice the difference but completely changed the way the plugin fetch the online status.
 
 = 2.0.1 =
 
