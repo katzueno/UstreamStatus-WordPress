@@ -90,7 +90,7 @@ In addition to WordPress site, you need to sign-up at Ustream.tv and start live 
 
 = How do I sign up for Ustream? =
 
-Click sgn-up icon from Ustream.tv
+Click sign-up icon from Ustream.tv
 
 = I don't have any images for offline/online images =
 
