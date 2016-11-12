@@ -66,7 +66,7 @@ Enter the shortcode as following format
 
 - Channel Name: Enter the channel name (Or you can enter the full URL of a Ustream channel)
 - Online Image URL: Enter the full path to the online image.
-- Offline Image URL: Enter the full path to the online image.
+- Offline Image URL: Enter the full path to the offline image.
 
 Shortcode Example:
 
